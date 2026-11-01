@@ -770,4 +770,41 @@ const restaurants = [
   },
 ];
 
-// your code here
+const restaurantList = document.querySelector('#restaurants');
+
+navigator.geolocation.getCurrentPosition(
+  position => {
+    const userLat = position.coords.latitude;
+    const userLon = position.coords.longitude;
+
+    function distance(restaurant) {
+      const lon = restaurant.location.coordinates[0];
+      const lat = restaurant.location.coordinates[1];
+
+      return Math.sqrt((userLat - lat) ** 2 + (userLon - lon) ** 2);
+    }
+
+    restaurants.sort((a, b) => distance(a) - distance(b));
+
+    restaurants.forEach(restaurant => {
+      const row = document.createElement('tr');
+      const nameCell = document.createElement('td');
+      const addressCell = document.createElement('td');
+
+      nameCell.textContent = restaurant.name;
+      addressCell.textContent = `${restaurant.address}, ${restaurant.city}`;
+
+      row.append(nameCell, addressCell);
+      restaurantList.appendChild(row);
+    });
+  },
+  error => {
+    const row = document.createElement('tr');
+    const messageCell = document.createElement('td');
+
+    messageCell.colSpan = 2;
+    messageCell.textContent = `Unable to determine your location: ${error.message}`;
+    row.appendChild(messageCell);
+    restaurantList.appendChild(row);
+  }
+);

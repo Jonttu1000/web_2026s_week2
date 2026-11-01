@@ -770,4 +770,26 @@ const restaurants = [
   },
 ];
 
-// your code here
+const map = L.map('map');
+map.setView([60.1699, 24.9384], 10);
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution:
+    '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+}).addTo(map);
+
+restaurants.forEach(restaurant => {
+  const [lng, lat] = restaurant.location.coordinates;
+  const marker = L.marker([lat, lng]).addTo(map);
+
+  const title = document.createElement('h3');
+  title.textContent = restaurant.name;
+
+  const address = document.createElement('p');
+  address.textContent = `${restaurant.address}, ${restaurant.postalCode} ${restaurant.city}`;
+
+  const popup = document.createElement('div');
+  popup.append(title, address);
+
+  marker.bindPopup(popup);
+});
